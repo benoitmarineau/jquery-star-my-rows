@@ -35,7 +35,7 @@
 				}
 			});
 
-		  $('a.star', table)
+			$('a.star', table)
                 /*
                 .mouseenter(function () {
                     toggleStar($('.glyphicon', $(this)));
@@ -45,13 +45,13 @@
                 })
                 */
 			.click(function (e) {
-				    e.preventDefault();
-				    var self = $(this);
-				    toggleStar($('.glyphicon', self));
+			    e.preventDefault();
+			    var self = $(this);
+			    toggleStar($('.glyphicon', self));
 
-				    var row = self.closest('tr')
-				    var currentId = getId(row);
-				    toggleStarCookie(config.cookieName, currentId, config.cookieExpiresInDays);
+			    var row = self.closest('tr')
+			    var currentId = getId(row);
+			    toggleStarCookie(config.cookieName, currentId, config.cookieExpiresInDays);
 			});
 		});		
 	};
