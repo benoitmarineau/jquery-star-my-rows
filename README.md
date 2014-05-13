@@ -59,6 +59,6 @@ $(document).ready(function () {
 	};
 				
 	// call the plugin on jquery element(s)
-	$('#table-classement').starMyRows(settings);
+	$('#my-table').starMyRows(settings);
 });
 ```
