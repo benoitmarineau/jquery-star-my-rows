@@ -60,7 +60,7 @@ $(document).ready(function () {
 		getId: getMyId
 	};
 				
-	// call the plugin on jquery element(s)
+	// call the plugin on a jquery table element
 	$('#my-table').starMyRows(settings);
 });
 ```
