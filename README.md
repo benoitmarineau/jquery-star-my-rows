@@ -3,6 +3,8 @@ jquery-star-my-rows
 
 Plugin that adds stars in front of each rows of a table making them behave as favorites. The selection is saved within a cookie.
 
+![Example](http://benoitmarineau.com/images/example.png "")
+
 
 Requirements
 ------------
