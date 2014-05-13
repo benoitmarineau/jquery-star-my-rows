@@ -1,7 +1,7 @@
 jquery-star-my-rows
 ===================
 
-Plugin that adds stars in front of each rows of a table, which stars end up being treat as favorites
+Plugin that adds stars in front of each rows of a table making them behave as favorites. The selection is saved within a cookie.
 
 
 Requirements
@@ -14,7 +14,7 @@ Requirements
 How to use it
 -------------
 
-To use this plugin, every row in your table should have an ID. You can place it wherever you want within your <tr> tags.
+To use this plugin, every row in your table should have an ID. You can place it wherever you want within your `<tr>` tags.
 
 ```html
 <table id="my-table">
