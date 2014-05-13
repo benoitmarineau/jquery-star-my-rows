@@ -3,7 +3,7 @@
 	$.fn.starMyRows = function (settings) {
 	    var config = {
 	        cookieName: 'starMyRows',
-          cookieExpiresInDays: 50,
+          	cookieExpiresInDays: 50,
 	        starClassName: 'star',
 	        color: null,
 	        getId: function() { return 0; }
