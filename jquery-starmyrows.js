@@ -3,39 +3,39 @@
 	$.fn.starMyRows = function (settings) {
 	    var config = {
 	        cookieName: 'starMyRows',
-	    	cookieExpiresInDays: 50,
+            cookieExpiresInDays: 50,
 	        starClassName: 'star',
 	        color: null,
 	        getId: function() { return 0; }
 		};
 
-    if (settings) { $.extend(config, settings); }
+	    if (settings) { $.extend(config, settings); }
             
-    var selectedIds = getSelectionStarsFromCookie(config.cookieName);
+        var selectedIds = getSelectionStarsFromCookie(config.cookieName);
 
-		return this.filter('table').each(function () {
+        var table = this;
 
-		    var table = $(this);
-			$('tr', table).each(function () {
-				var row = $(this);
+        if (table.is("table")) {
+            $('tr', table).each(function () {
+                var row = $(this);
 
-				if (row.parent().is("thead")) {
-				    row.prepend("<th></th>");
-				}
-				else if (row.parent().is("tfoot")) {
-				    row.prepend("<td></td>");
-				} else {
-				    var currentId = getId(row);
-				    var starBootStrapClass = 'glyphicon-star' + (($.inArray(currentId, selectedIds) < 0) ? "-empty" : "");
+                if (row.parent().is("thead")) {
+                    row.prepend("<th></th>");
+                }
+                else if (row.parent().is("tfoot")) {
+                    row.prepend("<td></td>");
+                } else {
+                    var currentId = getId(row);
+                    var starBootStrapClass = 'glyphicon-star' + (($.inArray(currentId, selectedIds) < 0) ? "-empty" : "");
 
-				    var html = '<td><a href="#" class="' + config.starClassName + '"><span class="glyphicon ' + starBootStrapClass + '"></span></a></td>';
-				    var newCell = $(html);
-				    $('.glyphicon', newCell).css('color', config.color);
-				    row.prepend(newCell);
-				}
-			});
+                    var html = '<td><a href="#" class="' + config.starClassName + '"><span class="glyphicon ' + starBootStrapClass + '"></span></a></td>';
+                    var newCell = $(html);
+                    $('.glyphicon', newCell).css('color', config.color);
+                    row.prepend(newCell);
+                }
+            });
 
-			$('a.star', table)
+            $('a.star', table)
                 /*
                 .mouseenter(function () {
                     toggleStar($('.glyphicon', $(this)));
@@ -44,16 +44,17 @@
                     toggleStar($('.glyphicon', $(this)));
                 })
                 */
-			.click(function (e) {
-			    e.preventDefault();
-			    var self = $(this);
-			    toggleStar($('.glyphicon', self));
+                .click(function (e) {
+                    e.preventDefault();
+                    var self = $(this);
+                    toggleStar($('.glyphicon', self));
 
-			    var row = self.closest('tr')
-			    var currentId = getId(row);
-			    toggleStarCookie(config.cookieName, currentId, config.cookieExpiresInDays);
-			});
-		});		
+                    var row = self.closest('tr')
+                    var currentId = getId(row);
+                    toggleStarCookie(config.cookieName, currentId, config.cookieExpiresInDays);
+                });
+        }
+		return this;
 	};
 
 	function toggleStar(element) {
@@ -90,7 +91,7 @@
 	    return sel;
 	}
 
-    // cookie method taken from w3schools
+    // cookie methods taken from w3schools
 	function setCookie(cname, cvalue, exdays) {
 	    var d = new Date();
 	    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
@@ -98,7 +99,6 @@
 	    document.cookie = cname + "=" + cvalue + "; " + expires;
 	}
 
-	// cookie method taken from w3schools
 	function getCookie(cname) {
 	    var name = cname + "=";
 	    var ca = document.cookie.split(';');
