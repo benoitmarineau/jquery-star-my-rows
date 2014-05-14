@@ -53,11 +53,12 @@ var getMyId = function (row) {
 $(document).ready(function () {
 	// you can specify the settings the way you want them
 	var settings = {
-		cookieName: 'starMyRows',
-		cookieExpiresInDays: 60,
-		starClassName: 'star',
 		color: 'black',
-		getId: getMyId
+		cookieExpiresInDays: 60,
+		cookieName: 'starMyRows',
+		disableHover: false,
+		getId: getMyId,
+		starClassName: 'star'
 	};
 				
 	// call the plugin on a jquery table element
