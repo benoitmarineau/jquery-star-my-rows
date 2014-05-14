@@ -11,7 +11,7 @@ Requirements
 
 * [JQuery](http://jquery.com/)
 * [Bootstrap Glyphicons CSS](http://getbootstrap.com/)
-
+* [Modernizr](http://modernizr.com/) (Optional, for touch device detection)
 
 How to use it
 -------------
