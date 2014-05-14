@@ -2,11 +2,12 @@
     
 	$.fn.starMyRows = function (settings) {
 	    var config = {
-	        cookieName: 'starMyRows',
-          	cookieExpiresInDays: 50,
-	        starClassName: 'star',
 	        color: null,
-	        getId: function() { return 0; }
+	        cookieName: 'starMyRows',
+	        cookieExpiresInDays: 50,
+	        disableHover: false,
+	        getId: function() { return 0; },
+	        starClassName: 'star'	        
 		};
 
 	    if (settings) { $.extend(config, settings); }
@@ -34,25 +35,26 @@
                     row.prepend(newCell);
                 }
             });
-
-            $('a.star', table)
-                /*
-                .mouseenter(function () {
+                 
+            // check if Modernizr library exists, it has detected that it is a no touch device and not DisableHover
+            if (typeof Modernizr !== "undefined" && table.closest('.no-touch').length > 0 && !config.disableHover) {
+                $('a.' + config.starClassName, table).hover(function () {                   
                     toggleStar($('.glyphicon', $(this)));
-                })
-                .mouseleave(function () {
+                }, function () {
                     toggleStar($('.glyphicon', $(this)));
-                })
-                */
-                .click(function (e) {
-                    e.preventDefault();
-                    var self = $(this);
-                    toggleStar($('.glyphicon', self));
-
-                    var row = self.closest('tr')
-                    var currentId = getId(row);
-                    toggleStarCookie(config.cookieName, currentId, config.cookieExpiresInDays);
                 });
+            }
+
+            // regular click function
+            $('a.' + config.starClassName, table).click(function (e) {
+                e.preventDefault();
+                var self = $(this);
+                toggleStar($('.glyphicon', self));
+
+                var row = self.closest('tr')
+                var currentId = getId(row);
+                toggleStarCookie(config.cookieName, currentId, config.cookieExpiresInDays);
+            });
         }
 		return this;
 	};
