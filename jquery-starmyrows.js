@@ -3,7 +3,7 @@
 	var config = {
         color: 'black',
         multiselect : false,
-        saveState: false,
+        saveState: true,
         cookieName: 'starMyRows',
         cookieExpiresInDays: 50,
         disableHover: false,
@@ -25,14 +25,13 @@
 
 	function addStarsToTable(table) {
 		var selectedIds = getSelectionStarsFromCookie();
-        
 		$('tr', table).each(function () {
             var row = $(this);
-
-            if (row.parent().is("thead")) {
+            var rowParent = row.parent();
+            if (rowParent.is("thead")) {
                 row.prepend("<th></th>");
             }
-            else if (row.parent().is("tfoot")) {
+            else if (rowParent.is("tfoot")) {
                 row.prepend("<td></td>");
             } else {
                 var currentId = config.getId(row);
@@ -45,7 +44,6 @@
 	}
 
 	function bindStarMouseOverEvents(table) {
-
         if ((typeof Modernizr !== "undefined" && table.closest('.no-touch').length > 0 && !config.disableHover) || !config.disableHover) {
             $('a.' + config.starClassName, table).hover(function () {   
             	var theStar = $('.glyphicon', $(this));
@@ -74,7 +72,6 @@
             	selectedStars.each(function (ii, ee) {
             		toggleStar($(this));
             	});
-            	
             	if (config.saveState) {
             		setCookie(config.cookieName, currentId, config.cookieExpiresInDays);	
             	}                	
@@ -90,7 +87,6 @@
 
 	function toggleStarCookie (currentId) {
 	    var selectedIds = getSelectionStarsFromCookie();
-
 	    if ($.inArray(currentId, selectedIds) < 0)
 	        selectedIds.push(currentId);
 	    else {
@@ -98,7 +94,6 @@
 	            return element != currentId;
 	        });
 	    }	        
-
 	    setCookie(config.cookieName, selectedIds.join('|'), config.cookieExpiresInDays);
 	}
 
