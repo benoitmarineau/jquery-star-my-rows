@@ -1,71 +1,95 @@
 (function ($) {
     
+	var config = {
+        color: 'black',
+        multiselect : false,
+        saveState: false,
+        cookieName: 'starMyRows',
+        cookieExpiresInDays: 50,
+        disableHover: false,
+        getId: function() { return 0; },
+        starClassName: 'star',
+        mouseoverClass: 'mouseover'	        
+	};
+
 	$.fn.starMyRows = function (settings) {
-	    var config = {
-	        color: null,
-	        cookieName: 'starMyRows',
-	        cookieExpiresInDays: 50,
-	        disableHover: false,
-	        getId: function() { return 0; },
-	        starClassName: 'star'	        
-		};
-
-	    if (settings) { $.extend(config, settings); }
-            
-        var selectedIds = getSelectionStarsFromCookie(config.cookieName);
-
-        var table = this;
-
+		var table = this;
         if (table.is("table")) {
-            $('tr', table).each(function () {
-                var row = $(this);
+	    	if (typeof settings == 'object') { $.extend(config, settings); }
+            addStarsToTable(table);     
+            bindStarMouseOverEvents(table);
+            bindStarClickEvents(table);
+        }
+		return table;
+	};
 
-                if (row.parent().is("thead")) {
-                    row.prepend("<th></th>");
-                }
-                else if (row.parent().is("tfoot")) {
-                    row.prepend("<td></td>");
-                } else {
-                    var currentId = getId(row);
-                    var starBootStrapClass = 'glyphicon-star' + (($.inArray(currentId, selectedIds) < 0) ? "-empty" : "");
+	function addStarsToTable(table) {
+		var selectedIds = getSelectionStarsFromCookie();
+        
+		$('tr', table).each(function () {
+            var row = $(this);
 
-                    var html = '<td><a href="#" class="' + config.starClassName + '"><span class="glyphicon ' + starBootStrapClass + '"></span></a></td>';
-                    var newCell = $(html);
-                    $('.glyphicon', newCell).css('color', config.color);
-                    row.prepend(newCell);
-                }
-            });
-                 
-            // check if Modernizr library exists, it has detected that it is a no touch device and not DisableHover
-            if (typeof Modernizr !== "undefined" && table.closest('.no-touch').length > 0 && !config.disableHover) {
-                $('a.' + config.starClassName, table).hover(function () {                   
-                    toggleStar($('.glyphicon', $(this)));
-                }, function () {
-                    toggleStar($('.glyphicon', $(this)));
-                });
+            if (row.parent().is("thead")) {
+                row.prepend("<th></th>");
             }
+            else if (row.parent().is("tfoot")) {
+                row.prepend("<td></td>");
+            } else {
+                var currentId = config.getId(row);
+                var starBootStrapClass = 'glyphicon-star' + (($.inArray(currentId, selectedIds) < 0) ? "-empty" : "");
+                var newCell = $('<td><a href="javascript:;" class="' + config.starClassName + '"><span class="glyphicon ' + starBootStrapClass + '"></span></a></td>');
+                $('.glyphicon', newCell).css('color', config.color);
+                row.prepend(newCell);
+            }
+        });
+	}
 
-            // regular click function
-            $('a.' + config.starClassName, table).click(function (e) {
-                e.preventDefault();
-                var self = $(this);
-                toggleStar($('.glyphicon', self));
+	function bindStarMouseOverEvents(table) {
 
-                var row = self.closest('tr')
-                var currentId = getId(row);
-                toggleStarCookie(config.cookieName, currentId, config.cookieExpiresInDays);
+        if ((typeof Modernizr !== "undefined" && table.closest('.no-touch').length > 0 && !config.disableHover) || !config.disableHover) {
+            $('a.' + config.starClassName, table).hover(function () {   
+            	var theStar = $('.glyphicon', $(this));
+                toggleStar(theStar);
+                theStar.addClass(config.mouseoverClass);
+            }, function () {
+            	var theStar = $('.glyphicon', $(this));
+                toggleStar(theStar);
+                theStar.removeClass(config.mouseoverClass);
             });
         }
-		return this;
-	};
+	}
+
+	function bindStarClickEvents(table) {
+        $('a.' + config.starClassName, table).click(function (e) {
+            e.preventDefault();
+            var self = $(this);
+            var row = self.closest('tr')
+            var currentId = config.getId(row);
+
+            if (config.multiselect && config.saveState) {
+            	toggleStar(theStar);
+            	toggleStarCookie(currentId);	
+            } else {
+            	var selectedStars = $('.glyphicon-star').not('.mouseover');
+            	selectedStars.each(function (ii, ee) {
+            		toggleStar($(this));
+            	});
+            	
+            	if (config.saveState) {
+            		setCookie(config.cookieName, currentId, config.cookieExpiresInDays);	
+            	}                	
+            }
+            toggleStar($('.glyphicon', self));
+        });
+	}
 
 	function toggleStar(element) {
 	    element.toggleClass('glyphicon-star-empty');
 	    element.toggleClass('glyphicon-star');
 	}
 
-	function toggleStarCookie(cookieName, currentId, cookieExpiresInDays) {
-	    var selectedIds = getSelectionStarsFromCookie(cookieName);
+	function toggleStarCookie (currentId) {
+	    var selectedIds = getSelectionStarsFromCookie();
 
 	    if ($.inArray(currentId, selectedIds) < 0)
 	        selectedIds.push(currentId);
@@ -75,21 +99,20 @@
 	        });
 	    }	        
 
-	    setCookie(cookieName, selectedIds.join('|'), cookieExpiresInDays);
+	    setCookie(config.cookieName, selectedIds.join('|'), config.cookieExpiresInDays);
 	}
 
-	function getSelectionStarsFromCookie(cookieName) {
-	    var cookieVal = getCookie(cookieName);
+	function getSelectionStarsFromCookie() {
+	    var cookieVal = getCookie(config.cookieName);
 	    var sel = new Array();
-
-	    if (cookieVal != '') {
-	        var ids = cookieVal.split('|');
-
-	        $.each(ids, function (index, element) {
-	            sel.push(element);
-	        });
+	    if (config.saveState) {
+	    	if (cookieVal != '') {
+		        var ids = cookieVal.split('|');
+		        $.each(ids, function (ii, ee) {
+		            sel.push(ee);
+		        });
+		    }	
 	    }
-
 	    return sel;
 	}
 
